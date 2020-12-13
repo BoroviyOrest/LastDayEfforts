@@ -1,0 +1,78 @@
+body {
+    background: #f0f2f5;
+}
+
+.logo > a > h2 {
+    color: white;
+}
+
+.username > p {
+    color: white;
+}
+
+.card-container p {
+    margin: 0;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-content {
+    margin-top: -16px;
+}
+
+[data-theme='compact'] .card-container > .ant-tabs-card > .ant-tabs-content {
+    margin-top: -8px;
+}
+
+[data-theme='compact'] .card-container > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane,
+.card-container > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
+    background: #fff;
+    padding: 16px;
+}
+
+[data-theme='compact'] .card-container > .ant-tabs-card > .ant-tabs-bar,
+.card-container > .ant-tabs-card > .ant-tabs-bar {
+    border-color: #fff;
+}
+
+[data-theme='compact'] .card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab,
+.card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
+    border-color: transparent;
+    background: transparent;
+}
+
+[data-theme='compact'] .card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active,
+.card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
+    border-color: #fff;
+    background: #fff;
+}
+
+.ant-card-cover {
+    height: 70%;
+}
+
+.ant-modal-body {
+    height: 500px;
+}
+
+.modal_image {
+    display: block;
+    margin: 0 auto;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+.avatar-uploader > .ant-upload {
+    width: 250px;
+    height: 250px;
+}
+
+.ant-modal-body {
+    height: auto;
+}
+
+.example {
+    height: 300px;
+    text-align: center;
+    border-radius: 4px;
+    padding: 100px 50px;
+}

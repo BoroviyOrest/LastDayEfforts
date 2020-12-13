@@ -1,0 +1,114 @@
+version: '3.7'
+
+services:
+  client_db:
+    image: postgres:10
+    container_name: client_db
+    working_dir: /docker-entrypoint-initdb.d
+    env_file:
+      - client_api/.env
+    ports:
+      - '5433:5433'
+    volumes:
+      - client_db-data:/var/lib/postgresql/data/
+    command: -p 5433
+
+  client_api:
+    container_name: client_api
+    build: client_api
+    env_file:
+      - client_api/.env
+    ports:
+      - '7000:7000'
+    depends_on:
+      - client_db
+    volumes:
+      - ./client_api:/client_api
+      - /var/log/client_api:/var/log/client_api
+    command: uvicorn client_api.asgi:application --host=0.0.0.0 --port=7000 --reload
+
+  ml_api_db:
+    image: postgres:10
+    container_name: ml_api_db
+    working_dir: /docker-entrypoint-initdb.d
+    env_file:
+      - ml_api/.env
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./mlapi_db:/docker-entrypoint-initdb.d/
+      - mlapi_db-data:/var/lib/postgresql/data/
+
+  ml_api:
+    container_name: ml_api
+    build: ml_api
+    env_file:
+      - ml_api/.env
+    ports:
+      - '8000:8000'
+    depends_on:
+      - ml_api_db
+    volumes:
+      - ./ml_api:/ml_api
+      - ./data/raw_images:/data/raw_images
+      - ./data/transformed_images:/data/transformed_images
+      - /var/log/ml_api:/var/log/ml_api
+
+  rabbitmq:
+    hostname: rabbitmq
+    image: "rabbitmq"
+    container_name: ml_api_rabbitmq
+    env_file:
+      - ml_api/.env
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq/data
+    ports:
+      - 5672:5672
+
+  ml_celery:
+    build: ml_api
+    container_name: ml_api_celery_worker
+    env_file:
+      - ml_api/.env
+    command: bash -c "celery -A core worker -l info"
+    volumes:
+      - ./ml_api:/ml_api
+    depends_on:
+      - ml_api_db
+      - rabbitmq
+
+  client_redis:
+    image: "redis"
+    container_name: client_api_redis
+    env_file:
+      - client_api/.env
+    volumes:
+      - ./redis:/var/lib/redis/data
+    ports:
+      - "6379:6379"
+
+  client_celery:
+    build: client_api
+    container_name: client_api_celery_worker
+    env_file:
+      - client_api/.env
+    command: bash -c "celery -A client_api worker -l info"
+    volumes:
+      - ./client_api:/client_api
+    depends_on:
+      - client_db
+      - client_redis
+
+  celery-beat:
+    build: client_api
+    container_name: celery_beat
+    command: bash -c "celery -A client_api beat -l info"
+    volumes:
+      - ./client_api:/client_api
+    depends_on:
+      - client_celery
+
+
+volumes:
+  client_db-data:
+  mlapi_db-data:

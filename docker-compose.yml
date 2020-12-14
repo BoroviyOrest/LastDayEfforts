@@ -25,7 +25,6 @@ services:
     volumes:
       - ./client_api:/client_api
       - /var/log/client_api:/var/log/client_api
-    entrypoint: /client_api/entrypoint.sh
 
   ml_api_db:
     image: postgres:10
